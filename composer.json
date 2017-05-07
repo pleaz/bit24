@@ -11,6 +11,10 @@
   ],
   "require": {
     "mesilov/bitrix24-php-sdk": "dev-master",
-    "monolog/monolog": "1.22.1"
+    "monolog/monolog": "1.22.1",
+    "phpoffice/phpexcel": "1.8.1",
+    "joshcam/mysqli-database-class": "2.7",
+    "mobiledetect/mobiledetectlib": "2.8.25",
+    "jurager/sender": "dev-master"
   }
 }

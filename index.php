@@ -1,56 +1,88 @@
-<?php
+<html>
+<head>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
 
-// https://b24-n590e10d6722a3.bitrix24.com/oauth/authorize/?response_type=code&client_id=local.590e600bacb1f2.81971446&redirect_uri=http://main.local
+<?
 
-// https://b24-n590e10d6722a3.bitrix24.com/oauth/token/?grant_type=authorization_code&client_id=local.590e600bacb1f2.81971446&client_secret=2MgOovr9hgknm7gfkD1pQZRdC2P52AojDv2TbM8cZZfGng7yOt&redirect_uri=http://main.local&scope=crm,user&code=dedckhhl2fpxqeiymyrt5pvmjzzst7xb
+if(!empty($_REQUEST['route'])){
 
-// {"access_token":"sc1fz2ytzjucvhj5fuwqqrm0mmu85aqk","expires_in":3600,"scope":"crm,user","domain":"b24-n590e10d6722a3.bitrix24.com","server_endpoint":"https:\/\/oauth.bitrix.info\/rest\/","status":"L","client_endpoint":"https:\/\/b24-n590e10d6722a3.bitrix24.com\/rest\/","member_id":"7c2338b5e537bae48c8a2fccd59cb36c","user_id":"1","refresh_token":"e0pjs9hxo5bli9x01q6dmc71duik1yb1"}
+    require_once ('init.php');
 
-require __DIR__ . '/vendor/autoload.php';
+    $q = $db->escape($_REQUEST['route']);
+    $gg = $db->where ('phone', '%'.$q.'%', 'like');
+    $results = $db->get('users');
+    $arr = ['use_count' => $results['0']['use_count']+1];
 
-use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
+    $detect = new Mobile_Detect;
+    $deviceType = ($detect->isMobile() ? ($detect->isTablet() ? 'tablet' : 'phone') : 'computer');
 
-// create a log channel
-$log = new Logger('bitrix24');
-$log->pushHandler(new StreamHandler('deb.log', Logger::DEBUG));
+    if($results['0']['use_count']==0) { $arr['first_place'] = date("Y-m-d H:i:s"); $arr['first_brows'] = $deviceType; }
+    $db->where ('id', $results['0']['id']);
+    $db->update ('users', $arr);
+    if($results==null) die('404');
+?>
+    Здравствуйте, <?=$results['0']['name'];?><br/>
+    <form id="searchForm" action="ajax.php" method="post">
+        Сообщение: <textarea name="k"></textarea>
+        <input type="hidden" name="id" value="<?=$results['0']['id'];?>" />
+        <input type="hidden" name="name" value="<?=$results['0']['name'];?>" />
+        <input type="hidden" name="phone" value="<?=$results['0']['phone'];?>" />
+        <input type="submit" value="Ввод" />
+    </form>
+    <div id="result"></div>
+
+    <script>
+        $(function() {
+            $("#searchForm").submit(function (e) {
+                e.preventDefault();
+                var $form = $(this),
+                    term = $form.find("textarea[name='k']").val(),
+                    idd = $form.find("input[name='id']").val(),
+                    nam = $form.find("input[name='name']").val(),
+                    pho = $form.find("input[name='phone']").val(),
+                    url = $form.attr("action");
+                var posting = $.post(url, {k: term, n: nam, p: pho, i: idd});
+                posting.done(function (data) {
+                    if($.isNumeric(data.result)===true) { $("#result").empty().html('Успешно отправлено!'); }
+                });
+            });
+        });
+    </script>
+<?
+
+    die();
+
+}
 
 
-// init lib
-$obB24App = new \Bitrix24\Bitrix24(false, $log);
-$obB24App->setApplicationScope(array('crm', 'user'));
-$obB24App->setApplicationId('local.590e600bacb1f2.81971446');
-$obB24App->setApplicationSecret('2MgOovr9hgknm7gfkD1pQZRdC2P52AojDv2TbM8cZZfGng7yOt');
+?>
 
-// set user-specific settings
-$obB24App->setDomain('b24-n590e10d6722a3.bitrix24.com');
-$obB24App->setMemberId('7c2338b5e537bae48c8a2fccd59cb36c');
-$obB24App->setAccessToken('sc1fz2ytzjucvhj5fuwqqrm0mmu85aqk');
-$obB24App->setRefreshToken('e0pjs9hxo5bli9x01q6dmc71duik1yb1');
+<form id="searchForm" action="ajax.php" method="post">
+    Номер телефона: <input type="text" name="q" value =""/>
+    <input type="submit" value="Ввод" />
+</form>
+<div id="result"></div>
 
-// get information about current user from bitrix24
-$obB24User = new \Bitrix24\User\User($obB24App);
-$arCurrentB24User = $obB24User->current();
+<script>
+    $(function() {
+        $("#searchForm").submit(function (e) {
+            e.preventDefault();
+            var $form = $(this),
+                term = $form.find("input[name='q']").val(),
+                url = $form.attr("action");
+            var posting = $.post(url, {q: term});
+            posting.done(function (data) {
+                if(data.st===true){ $( location ).attr("href", '/'+data.tel); }
+                $("#result").empty().html(data);
+            });
+        });
+    });
+</script>
+</body>
 
 
 
-$lead = new \Bitrix24\CRM\Lead($obB24App);
-$lead->add(
-    [
-    'TITLE' => 'ИП Титов',
-    'NAME' => 'Глеб',
-    'SECOND_NAME' => 'Егорович',
-    'LAST_NAME' => 'Титов',
-    'STATUS_ID' => 'NEW',
-    'OPENED' => 'Y',
-    'ASSIGNED_BY_ID' => '1',
-    'CURRENCY_ID' => 'USD',
-    'OPPORTUNITY' => '12500',
-    'PHONE' => ['VALUE' => '555888', 'VALUE_TYPE' => 'WORK']
-    ],
-    [
-        'REGISTER_SONET_EVENT' => 'Y'
-    ]
-);
 
-print_r($obB24App->getRawResponse());
+
