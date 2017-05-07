@@ -2,9 +2,9 @@
 
 // https://b24-n590e10d6722a3.bitrix24.com/oauth/authorize/?response_type=code&client_id=local.590e600bacb1f2.81971446&redirect_uri=http://main.local
 
-// https://b24-n590e10d6722a3.bitrix24.com/oauth/token/?grant_type=authorization_code&client_id=local.590e600bacb1f2.81971446&client_secret=2MgOovr9hgknm7gfkD1pQZRdC2P52AojDv2TbM8cZZfGng7yOt&redirect_uri=http://main.local&scope=crm,user&code=2jj1qauh8wtth7j66agse01r3eh4p70p
+// https://b24-n590e10d6722a3.bitrix24.com/oauth/token/?grant_type=authorization_code&client_id=local.590e600bacb1f2.81971446&client_secret=2MgOovr9hgknm7gfkD1pQZRdC2P52AojDv2TbM8cZZfGng7yOt&redirect_uri=http://main.local&scope=crm,user&code=dedckhhl2fpxqeiymyrt5pvmjzzst7xb
 
-// {"access_token":"sj4if9ltxwxptncgc94o1rd47sa6pb6a","expires_in":3600,"scope":"crm,user","domain":"b24-n590e10d6722a3.bitrix24.com","server_endpoint":"https:\/\/oauth.bitrix.info\/rest\/","status":"L","client_endpoint":"https:\/\/b24-n590e10d6722a3.bitrix24.com\/rest\/","member_id":"7c2338b5e537bae48c8a2fccd59cb36c","user_id":"1","refresh_token":"5765p9gqfwm2bykmwj3bilzywmi2im4i"}
+// {"access_token":"sc1fz2ytzjucvhj5fuwqqrm0mmu85aqk","expires_in":3600,"scope":"crm,user","domain":"b24-n590e10d6722a3.bitrix24.com","server_endpoint":"https:\/\/oauth.bitrix.info\/rest\/","status":"L","client_endpoint":"https:\/\/b24-n590e10d6722a3.bitrix24.com\/rest\/","member_id":"7c2338b5e537bae48c8a2fccd59cb36c","user_id":"1","refresh_token":"e0pjs9hxo5bli9x01q6dmc71duik1yb1"}
 
 require __DIR__ . '/vendor/autoload.php';
 
@@ -25,8 +25,8 @@ $obB24App->setApplicationSecret('2MgOovr9hgknm7gfkD1pQZRdC2P52AojDv2TbM8cZZfGng7
 // set user-specific settings
 $obB24App->setDomain('b24-n590e10d6722a3.bitrix24.com');
 $obB24App->setMemberId('7c2338b5e537bae48c8a2fccd59cb36c');
-$obB24App->setAccessToken('sj4if9ltxwxptncgc94o1rd47sa6pb6a');
-$obB24App->setRefreshToken('5765p9gqfwm2bykmwj3bilzywmi2im4i');
+$obB24App->setAccessToken('sc1fz2ytzjucvhj5fuwqqrm0mmu85aqk');
+$obB24App->setRefreshToken('e0pjs9hxo5bli9x01q6dmc71duik1yb1');
 
 // get information about current user from bitrix24
 $obB24User = new \Bitrix24\User\User($obB24App);
